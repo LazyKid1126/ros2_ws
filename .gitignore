@@ -1,0 +1,7 @@
+# 忽略 ROS 2 編譯產生的資料夾
+build/
+install/
+log/
+
+# 忽略 VS Code 的本地端設定檔
+.vscode/

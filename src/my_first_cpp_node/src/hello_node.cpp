@@ -1,25 +1,35 @@
 #include "rclcpp/rclcpp.hpp"
-
-// 建立一個繼承自 rclcpp::Node 的類別（這是 ROS 2 的標準寫法）
+#include "chrono"
+//using namespace
+using namespace std::chrono_literals;
+// rclcpp::Node 
 class HelloNode : public rclcpp::Node
 {
 public:
-    HelloNode() : Node("hello_node") // 節點的名稱
+    HelloNode() : Node("hello_node"), count_(0) 
     {
-        // 這是 ROS 2 的印出功能，類似於 C++ 的 std::cout
-        RCLCPP_INFO(this->get_logger(), "Hello ROS 2! 樹莓派 C++ 節點啟動成功！");
+        //timer
+        timer_ = this->create_wall_timer(1000ms, std::bind(&HelloNode::timer_callback, this));
+        //print
+        RCLCPP_INFO(this->get_logger(), "Ros 2 Tick Tock");
     }
+private:
+    //timer_callback function
+    void timer_callback()
+    {
+        count_++;
+        RCLCPP_INFO(this->get_logger(), "current count: %d",count_);
+    }
+    rclcpp::TimerBase::SharedPtr timer_;
+    int count_;
 };
+
 
 int main(int argc, char **argv)
 {
-    // 初始化 ROS 2 通訊介面
+    //main
     rclcpp::init(argc, argv);
-    
-    // 建立節點並讓它保持運行（spin）
     rclcpp::spin(std::make_shared<HelloNode>());
-    
-    // 關閉 ROS 2 通訊介面
     rclcpp::shutdown();
     return 0;
 }
